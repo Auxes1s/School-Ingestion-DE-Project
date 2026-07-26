@@ -1,0 +1,87 @@
+# Synthetic data generation. Frozen contract — slice 2 reads this, never edits it.
+#
+# One seed drives all randomness. Same seed + same profile => byte-identical raw files.
+
+profiles:
+  tiny:
+    divisions: 1
+    municipalities: 2
+    schools: 5
+    children: 1000
+  demo:
+    divisions: 3
+    municipalities: 20
+    schools: 40
+    children: 12000
+  large:
+    divisions: 3
+    municipalities: 20
+    schools: 150
+    children: 50000
+
+# Panel structure
+treatment_share: 0.5
+baseline_retention_rate: 0.88   # children with a genuine endline record
+transfer_rate: 0.03             # of retained children, share appearing at a DIFFERENT endline school
+                                # per-school blocking cannot find these — see spec §3.2
+
+# Program allocation realism
+nominal_rice_kg_per_child: 0.09
+allocation_lag_share: 0.35      # schools whose allocation base predates current enrollment
+
+# Injected defect rates. Every injected defect is recorded in truth_defects.parquet
+# with expected_detectable set per `detectable` below.
+issue_rates:
+  missing_lrn: 0.05
+  malformed_lrn: 0.02
+  date_format_ambiguity: 0.04
+  excel_serial_date: 0.06
+  timestamp_suffixed_date: 0.03
+  impossible_date: 0.004
+  missing_birth_date: 0.02
+  missing_sex: 0.015
+  duplicate_exact_row: 0.01
+  duplicate_lrn_name_variant: 0.01
+  name_spelling_drift: 0.05      # endline-only; drives probabilistic linkage difficulty
+  implausible_height: 0.005
+  implausible_weight: 0.005
+  height_decrease: 0.004
+  missing_height: 0.03
+  missing_weight: 0.03
+  digit_heaping: 0.08
+  sex_inconsistent_across_waves: 0.006
+  birthdate_inconsistent_across_waves: 0.008
+  school_name_drift: 0.03
+  late_submission: 0.06
+
+# Defects a DQA rule is expected to catch. Those marked false are still recorded in
+# truth_defects but are excluded from the detection-rate denominator (spec §2.1).
+detectable:
+  missing_lrn: true
+  malformed_lrn: true
+  date_format_ambiguity: true
+  excel_serial_date: true
+  timestamp_suffixed_date: true
+  impossible_date: true
+  missing_birth_date: true
+  missing_sex: true
+  duplicate_exact_row: true
+  duplicate_lrn_name_variant: true
+  name_spelling_drift: false     # indistinguishable from a genuine different child
+  implausible_height: true
+  implausible_weight: true
+  height_decrease: true
+  missing_height: true
+  missing_weight: true
+  digit_heaping: true
+  sex_inconsistent_across_waves: true
+  birthdate_inconsistent_across_waves: true
+  school_name_drift: true
+  late_submission: true
+
+# Raw file emission
+file_format_mix:
+  xlsx: 0.75
+  csv: 0.25
+schools_per_file: 1
+sheet_name_variants: ["Sheet1", "DATA", "Masterlist", "SBFP"]

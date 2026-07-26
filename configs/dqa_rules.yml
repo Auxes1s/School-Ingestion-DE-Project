@@ -1,0 +1,163 @@
+# DQA rule registry. Frozen contract.
+#
+# `detects` is the join key for the DQA scorecard (spec §3.1): it maps each rule to the
+# truth_defects.defect_type values it is expected to catch. Slice 2 injects those
+# defect_types; slice 4 emits these rule_ids. The scorecard joins them.
+#
+# Every detectable defect_type in synthetic_data.yml MUST appear in exactly one rule's
+# `detects` list. tests/unit/test_config_contracts.py enforces this.
+
+thresholds:
+  height_cm: { min: 80, max: 200 }
+  weight_kg: { min: 10, max: 100 }
+  age_years: { min: 4, max: 15 }
+  bmi: { min: 8, max: 40 }
+  measurement_elapsed_days: { min: 90, max: 300 }
+  height_decrease_tolerance_cm: 1.0
+  digit_heaping_threshold: 0.35   # share of values ending in 0 or 5 within a school-period
+  late_submission_grace_days: 14
+
+rules:
+  - rule_id: DQA_SCHEMA_REQUIRED_COLUMN_MISSING
+    description: A required canonical column could not be mapped from the source file.
+    severity: CRITICAL
+    scope: file
+    detects: []
+
+  - rule_id: DQA_COMPLETENESS_MISSING_LRN
+    description: Learner reference number is absent.
+    severity: HIGH
+    scope: record
+    fields: [lrn_clean]
+    detects: [missing_lrn]
+
+  - rule_id: DQA_VALIDITY_MALFORMED_LRN
+    description: LRN present but does not match the expected 12-digit pattern.
+    severity: HIGH
+    scope: record
+    fields: [lrn_clean]
+    detects: [malformed_lrn]
+
+  - rule_id: DQA_COMPLETENESS_MISSING_BIRTH_DATE
+    description: Birth date is absent.
+    severity: HIGH
+    scope: record
+    fields: [birthday_str]
+    detects: [missing_birth_date]
+
+  - rule_id: DQA_COMPLETENESS_MISSING_SEX
+    description: Sex is absent or unrecognized.
+    severity: MEDIUM
+    scope: record
+    fields: [sex]
+    detects: [missing_sex]
+
+  - rule_id: DQA_DATE_AMBIGUOUS_FORMAT
+    description: Date is parseable under both DD/MM and MM/DD and was resolved by rule precedence.
+    severity: MEDIUM
+    scope: record
+    fields: [birthday_str, measurement_date]
+    detects: [date_format_ambiguity]
+
+  - rule_id: DQA_DATE_EXCEL_SERIAL
+    description: Date arrived as an Excel serial number rather than a date.
+    severity: LOW
+    scope: record
+    fields: [birthday_str, measurement_date]
+    detects: [excel_serial_date, timestamp_suffixed_date]
+
+  - rule_id: DQA_DATE_IMPOSSIBLE
+    description: Date is unparseable or falls outside the plausible window.
+    severity: CRITICAL
+    scope: record
+    fields: [birthday_str, measurement_date]
+    detects: [impossible_date]
+
+  - rule_id: DQA_DUPLICATE_EXACT_ROW
+    description: Row is byte-identical to another row in the same file.
+    severity: HIGH
+    scope: record
+    detects: [duplicate_exact_row]
+
+  - rule_id: DQA_DUPLICATE_LRN_WITHIN_SCHOOL_PERIOD
+    description: Same LRN appears more than once within a school-period, with name variation.
+    severity: HIGH
+    scope: record
+    fields: [lrn_clean]
+    detects: [duplicate_lrn_name_variant]
+
+  - rule_id: DQA_RANGE_IMPLAUSIBLE_HEIGHT
+    description: Height outside the biologically plausible range.
+    severity: CRITICAL
+    scope: record
+    fields: [height_cm]
+    detects: [implausible_height]
+
+  - rule_id: DQA_RANGE_IMPLAUSIBLE_WEIGHT
+    description: Weight outside the biologically plausible range.
+    severity: CRITICAL
+    scope: record
+    fields: [weight_kg]
+    detects: [implausible_weight]
+
+  - rule_id: DQA_COMPLETENESS_MISSING_HEIGHT
+    description: Height is absent.
+    severity: HIGH
+    scope: record
+    fields: [height_cm]
+    detects: [missing_height]
+
+  - rule_id: DQA_COMPLETENESS_MISSING_WEIGHT
+    description: Weight is absent.
+    severity: HIGH
+    scope: record
+    fields: [weight_kg]
+    detects: [missing_weight]
+
+  - rule_id: DQA_CONSISTENCY_HEIGHT_DECREASE
+    description: Endline height is lower than baseline height beyond measurement tolerance.
+    severity: HIGH
+    scope: child
+    fields: [height_cm]
+    detects: [height_decrease]
+
+  - rule_id: DQA_CONSISTENCY_SEX_ACROSS_WAVES
+    description: Sex differs between baseline and endline for the same linked child.
+    severity: HIGH
+    scope: child
+    fields: [sex]
+    detects: [sex_inconsistent_across_waves]
+
+  - rule_id: DQA_CONSISTENCY_BIRTHDATE_ACROSS_WAVES
+    description: Birth date differs between baseline and endline for the same linked child.
+    severity: HIGH
+    scope: child
+    fields: [birthday_str]
+    detects: [birthdate_inconsistent_across_waves]
+
+  - rule_id: DQA_MEASUREMENT_DIGIT_HEAPING
+    description: Measurement values within a school-period cluster on terminal digits 0 and 5.
+    severity: MEDIUM
+    scope: school_period
+    fields: [height_cm, weight_kg]
+    detects: [digit_heaping]
+
+  - rule_id: DQA_REFERENCE_SCHOOL_NAME_DRIFT
+    description: School name in the submission does not exactly match the masterlist.
+    severity: LOW
+    scope: file
+    fields: [school_name]
+    detects: [school_name_drift]
+
+  - rule_id: DQA_TIMELINESS_LATE_SUBMISSION
+    description: File submitted after the close of its reporting window plus grace period.
+    severity: MEDIUM
+    scope: file
+    detects: [late_submission]
+
+  - rule_id: DQA_PROGRAM_ENROLLMENT_EXCEEDS_ALLOCATION
+    description: Current enrollment exceeds the allocation base, implying ration dilution.
+    severity: MEDIUM
+    scope: school
+    fields: [allocated_children, current_enrollment]
+    detects: []
