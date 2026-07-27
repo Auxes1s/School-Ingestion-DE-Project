@@ -7,6 +7,8 @@ and a Streamlit data-quality command center.
 
 **All data is generated on demand. No real learner or school records are included.**
 
+![Pipeline architecture: messy sources through bronze, silver, DQA and linkage, gold, measured scorecards, and serving](docs/images/pipeline-overview.svg)
+
 ## The headline: quality you can measure
 
 Most portfolio pipelines assert that their checks work. This one generates a hidden
@@ -25,6 +27,8 @@ Tiny fixed-seed demo results:
 | Linkage recall @ 0.75 | **94.0%** |
 | Linkage F1 @ 0.75 | **96.9%** |
 | Transfer recall | **88.5%** |
+
+![Verified tiny-profile metrics: DQA detection and linkage precision, recall, F1, and transfer recall](docs/images/verified-results.svg)
 
 The dashboard leads with the **DQA scorecard**: injected, detected, missed, and false
 positive counts per rule. The linkage page separates match rate from known-truth recall
@@ -66,18 +70,6 @@ Docker users can run `docker compose run --rm pipeline`, followed by
 `docker compose up dashboard`.
 
 ## Architecture
-
-```text
-Python generator   → synthetic_raw/ + answer key (outside the lakehouse)
-Python ingestion   → bronze/        manifests, hashes, drift, date provenance
-dbt + DuckDB       → silver_*       standardized entities and measurements
-                     ├─ Python DQA  → silver_dqa_issues
-                     └─ Splink      → candidates, one-to-one results, review queue
-dbt + DuckDB       → gold_*         panel, monitoring, exposure, quality marts
-Python evaluation  → scorecards     pipeline outputs joined to answer key
-Dagster            → 8 assets       the complete cross-framework dependency graph
-Streamlit          → 6 pages        privacy-safe command center
-```
 
 The answer key is structurally isolated: only `sbfp_platform.evaluation` may read it.
 AST tests prevent pipeline imports or path literals, dbt models are scanned, and runtime

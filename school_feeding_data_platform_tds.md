@@ -45,7 +45,7 @@ The result is a small but credible public-sector data platform rather than a one
 
 The fixed-seed `tiny` profile was executed through the complete CLI and Dagster graphs. It produced 1,918 baseline/endline source records across five schools and 13 files. All 21 configured DQA rules ran, detecting 841 of 863 targeted injected defects (97.45%). At the configured 0.75 operating threshold, combined linkage accepted 827 true pairs with 100% precision, 93.98% recall, 96.90% F1, and 88.46% recall among transferring pupils.
 
-Local verification completed with 396 passing tests, Ruff lint/format checks, privacy scanning, dbt builds, Streamlit AppTest, and the tiny full refresh. The Docker image is exercised by GitHub Actions because Docker is unavailable on the development host. No dashboard screenshot is claimed; all six pages are verified by Streamlit AppTest without fabricating an image.
+Local verification completed with 398 passing tests, Ruff lint/format checks, privacy scanning, dbt builds, Streamlit AppTest, and the tiny full refresh. The Docker image is exercised by GitHub Actions because Docker is unavailable on the development host. No dashboard screenshot is claimed; all six pages are verified by Streamlit AppTest without fabricating an image.
 
 ---
 
@@ -1731,7 +1731,7 @@ All criteria below are met by the implementation, subject to the remote-CI verif
 11. No real or sensitive data are included.
 12. The README clearly showcases data engineering lifecycle skills.
 
-Verification evidence: the fixed-seed tiny CLI refresh and full Dagster asset materialization both succeed; dbt reports 22 passing silver build nodes and 14 passing gold build nodes; 396 pytest tests pass; Ruff, privacy, runtime gold/export privacy, and fixed-seed score regression checks pass. Docker cannot be executed on the development host because the Docker CLI is absent, so the CI container job is the authoritative build check after branch publication.
+Verification evidence: the fixed-seed tiny CLI refresh and full Dagster asset materialization both succeed; dbt reports 22 passing silver build nodes and 14 passing gold build nodes; 398 pytest tests pass; Ruff, privacy, runtime gold/export privacy, and fixed-seed score regression checks pass. Docker cannot be executed on the development host because the Docker CLI is absent, so the CI container job is the authoritative build check after branch publication.
 
 ---
 
