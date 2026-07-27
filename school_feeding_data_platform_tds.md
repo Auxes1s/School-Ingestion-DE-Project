@@ -45,7 +45,7 @@ The result is a small but credible public-sector data platform rather than a one
 
 The fixed-seed `tiny` profile was executed through the complete CLI and Dagster graphs. It produced 1,918 baseline/endline source records across five schools and 13 files. All 21 configured DQA rules ran, detecting 841 of 863 targeted injected defects (97.45%). At the configured 0.75 operating threshold, combined linkage accepted 827 true pairs with 100% precision, 93.98% recall, 96.90% F1, and 88.46% recall among transferring pupils.
 
-Local verification completed with 398 passing tests, Ruff lint/format checks, privacy scanning, dbt builds, Streamlit AppTest, and the tiny full refresh. The Docker image is exercised by GitHub Actions because Docker is unavailable on the development host. No dashboard screenshot is claimed; all six pages are verified by Streamlit AppTest without fabricating an image.
+Local verification completed with 399 passing tests, Ruff lint/format checks, privacy scanning, dbt builds, Streamlit AppTest, and the tiny full refresh. The Docker image is exercised by GitHub Actions because Docker is unavailable on the development host. No dashboard screenshot is claimed; all six views are verified by Streamlit AppTest without fabricating an image.
 
 ---
 
@@ -254,7 +254,7 @@ school-feeding-data-platform/
 ├── src/sbfp_platform/       # generator, ingestion, validation, linkage, transforms, evaluation
 ├── dbt/                     # staging, four silver models, six gold models, tests
 ├── orchestration/           # one Dagster definitions module with eight assets
-├── dashboards/              # six-page Streamlit command center
+├── dashboards/              # six-view Streamlit command center
 ├── docs/                    # architecture, contracts, lineage, privacy, DQA, six ADRs
 ├── tests/                   # unit, integration, privacy, and regression tests
 ├── data/                    # generated and Git-ignored source/lakehouse artifacts
@@ -1445,7 +1445,7 @@ The implemented README includes:
 8. repository map
 9. CLI, Makefile, Dagster, and Docker commands
 
-A screenshot was deliberately not fabricated when the in-app browser was unavailable. Streamlit AppTest provides executable coverage for all six pages; a real screenshot remains a non-blocking publication enhancement.
+A screenshot was deliberately not fabricated when the in-app browser was unavailable. Streamlit AppTest provides executable coverage for all six dashboard views; a real screenshot remains a non-blocking publication enhancement.
 
 ### 25.2 Architecture Document
 
@@ -1669,7 +1669,7 @@ Deliverables:
 - HTML DQA report
 - pipeline run summary
 - evaluation readiness report
-- Streamlit AppTest coverage for all six pages
+- Streamlit AppTest coverage for all six dashboard views
 
 Acceptance criteria:
 
@@ -1731,7 +1731,7 @@ All criteria below are met by the implementation, subject to the remote-CI verif
 11. No real or sensitive data are included.
 12. The README clearly showcases data engineering lifecycle skills.
 
-Verification evidence: the fixed-seed tiny CLI refresh and full Dagster asset materialization both succeed; dbt reports 22 passing silver build nodes and 14 passing gold build nodes; 398 pytest tests pass; Ruff, privacy, runtime gold/export privacy, and fixed-seed score regression checks pass. Docker cannot be executed on the development host because the Docker CLI is absent, so the CI container job is the authoritative build check after branch publication.
+Verification evidence: the fixed-seed tiny CLI refresh and full Dagster asset materialization both succeed; dbt reports 22 passing silver build nodes and 14 passing gold build nodes; 399 pytest tests pass; Ruff, privacy, runtime gold/export privacy, and fixed-seed score regression checks pass. Docker cannot be executed on the development host because the Docker CLI is absent, so the CI container job is the authoritative build check after branch publication.
 
 ---
 
@@ -1792,7 +1792,7 @@ MVP excludes:
 
 This keeps the first version achievable while preserving the path to a stronger platform.
 
-Version 2.0 implements every item originally deferred: dbt, Splink, Docker, full Dagster orchestration, CI artifact upload, and HTML reports. The only deferred portfolio artifact is a real dashboard screenshot; the application itself is covered by Streamlit AppTest.
+Version 2.0 implements every item originally deferred: dbt, Splink, Docker, full Dagster orchestration, CI artifact upload, and HTML reports. The only deferred portfolio artifact is a real dashboard screenshot; all six views are covered by Streamlit AppTest.
 
 ---
 
@@ -1807,7 +1807,7 @@ The implementation landed in the following independently verified order:
 5. Build silver tables.
 6. Build deterministic linkage.
 7. Build gold evaluation panel.
-8. Build the six-page dashboard, HTML reports, and privacy-safe exports.
+8. Build the six-view dashboard, HTML reports, and privacy-safe exports.
 9. Add Dagster orchestration, Docker/Compose, CI gates, regression floors, and portfolio documentation.
 
 ---

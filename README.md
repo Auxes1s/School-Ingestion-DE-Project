@@ -22,6 +22,7 @@ Tiny fixed-seed demo results:
 | Schools / source files | 5 / 13 |
 | Baseline + endline records | 1,918 |
 | DQA rules executed | 21 / 21 |
+| Injected defects detected | **841 / 863 (97.45%)** |
 | Combined accepted links | 827 |
 | Linkage precision @ 0.75 | **100.0%** |
 | Linkage recall @ 0.75 | **94.0%** |
@@ -71,6 +72,10 @@ Docker users can run `docker compose run --rm pipeline`, followed by
 
 ## Architecture
 
+Generated CSV/XLSX submissions move through immutable bronze ingestion, tested dbt
+silver models, Python DQA/linkage, privacy-safe dbt gold marts, and dashboard/export
+serving. Only the isolated evaluation lane can join pipeline results to the answer key.
+
 The answer key is structurally isolated: only `sbfp_platform.evaluation` may read it.
 AST tests prevent pipeline imports or path literals, dbt models are scanned, and runtime
 tests reject learner names, LRNs, or raw payloads in gold and exports.
@@ -90,7 +95,7 @@ labels into validation.
 | Data quality | 21 severity/scope-aware rules and measured detection scorecard |
 | Entity resolution | Three deterministic passes, Splink 4 EM, global one-to-one resolver |
 | Orchestration | Dagster assets branching after silver and rejoining before gold |
-| Serving | Six-page Streamlit command center and dual CSV/Parquet exports |
+| Serving | Six-view Streamlit command center and dual CSV/Parquet exports |
 | DataOps | pytest regression floors, Ruff, GitHub Actions, Docker, privacy scan |
 
 ## Repository map

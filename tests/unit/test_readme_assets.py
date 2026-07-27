@@ -18,6 +18,9 @@ def test_readme_graphics_exist_and_are_accessible_svg() -> None:
         assert alt_text.strip()
         svg = ElementTree.parse(root / relative_path).getroot()
         assert svg.tag == f"{SVG}svg"
-        assert svg.find(f"{SVG}title") is not None
-        assert svg.find(f"{SVG}desc") is not None
+        title = svg.find(f"{SVG}title")
+        description = svg.find(f"{SVG}desc")
+        assert title is not None and title.text
+        assert description is not None and description.text
+        assert svg.get("aria-labelledby", "").split() == [title.get("id"), description.get("id")]
         assert svg.get("viewBox")

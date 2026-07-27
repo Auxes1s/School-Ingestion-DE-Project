@@ -3,7 +3,7 @@
   <desc id="desc">Horizontal bars show 97.45 percent DQA detection, 100 percent linkage precision, 93.98 percent linkage recall, 96.90 percent linkage F1, and 88.46 percent transfer recall.</desc>
   <rect width="1200" height="420" rx="24" fill="#0f172a"/>
   <text x="44" y="53" fill="#f8fafc" font-family="Inter,Segoe UI,sans-serif" font-size="27" font-weight="600">Measured, not asserted</text>
-  <text x="44" y="82" fill="#94a3b8" font-family="Inter,Segoe UI,sans-serif" font-size="15">Fixed seed 2026 • tiny profile • 1,918 records • 827 accepted links • 398 tests</text>
+  <text x="44" y="82" fill="#94a3b8" font-family="Inter,Segoe UI,sans-serif" font-size="15">Fixed seed 2026 • tiny profile • 1,918 records • 827 accepted links</text>
 
   <g font-family="Inter,Segoe UI,sans-serif">
     <g transform="translate(44 116)">
@@ -38,5 +38,5 @@
     </g>
   </g>
 
-  <text x="1156" y="399" text-anchor="end" fill="#64748b" font-family="Inter,Segoe UI,sans-serif" font-size="11">Combined linkage at threshold 0.75</text>
+  <text x="1156" y="399" text-anchor="end" fill="#94a3b8" font-family="Inter,Segoe UI,sans-serif" font-size="12">Combined linkage at threshold 0.75</text>
 </svg>

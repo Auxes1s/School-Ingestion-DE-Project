@@ -34,6 +34,8 @@ def metric_row(items: list[tuple[str, object, str | None]]) -> None:
 
 def operating_linkage() -> pd.Series | None:
     score = table("gold_linkage_scorecard")
+    if score.empty:
+        return None
     rows = score[(score.get("method") == "combined") & (score.get("threshold") == 0.75)]
     return None if rows.empty else rows.iloc[0]
 

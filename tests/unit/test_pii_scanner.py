@@ -34,6 +34,6 @@ def test_scanner_checks_public_outputs_and_email_addresses(tmp_path) -> None:
     assert any("email address" in finding for finding in scan(tmp_path))
 
 
-def test_scanner_ignores_gitignored_local_session_exports(tmp_path) -> None:
+def test_scanner_does_not_exempt_session_shaped_filenames(tmp_path) -> None:
     (tmp_path / "2026-01-01-users-local.txt").write_text("account@example.org", encoding="utf-8")
-    assert scan(tmp_path) == []
+    assert any("email address" in finding for finding in scan(tmp_path))
