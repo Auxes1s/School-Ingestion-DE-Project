@@ -15,6 +15,18 @@ def test_scanner_ignores_generated_raw_folder(tmp_path) -> None:
     assert scan(tmp_path) == []
 
 
+def test_scanner_ignores_generated_build_metadata(tmp_path) -> None:
+    folder = tmp_path / "dbt" / "target"
+    folder.mkdir(parents=True)
+    (folder / "manifest.json").write_text('{"generated_id":"123456789012"}', encoding="utf-8")
+    public = tmp_path / "exports" / "target"
+    public.mkdir(parents=True)
+    (public / "public.json").write_text('{"learner_id":"123456789012"}', encoding="utf-8")
+    assert [finding for finding in scan(tmp_path) if "12-digit" in finding] == [
+        "12-digit identifier-like value: exports/target/public.json"
+    ]
+
+
 def test_scanner_checks_public_outputs_and_email_addresses(tmp_path) -> None:
     folder = tmp_path / "outputs" / "exports"
     folder.mkdir(parents=True)

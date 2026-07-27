@@ -23,7 +23,11 @@ def scan(root: Path | None = None) -> list[str]:
     findings: list[str] = []
     for path in base.rglob("*"):
         relative = path.relative_to(base)
-        if not path.is_file() or set(relative.parts) & EXCLUDED_PARTS:
+        if (
+            not path.is_file()
+            or set(relative.parts) & EXCLUDED_PARTS
+            or relative.parts[:2] == ("dbt", "target")
+        ):
             continue
         if len(relative.parts) == 1 and LOCAL_SESSION_EXPORT.match(path.name):
             continue
