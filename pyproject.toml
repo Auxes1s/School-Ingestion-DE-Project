@@ -36,6 +36,7 @@ dev = [
 
 [project.scripts]
 sbfp-platform = "sbfp_platform.cli:app"
+sbfp-platform-scan-pii = "sbfp_platform.privacy.pii_scanner:main"
 
 [build-system]
 requires = ["hatchling"]

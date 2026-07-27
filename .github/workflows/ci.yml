@@ -45,10 +45,6 @@ jobs:
     name: Tiny-profile pipeline smoke test
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # The full-refresh chain becomes runnable once the generator and ingestion slices
-    # land. Until then this job would fail on an unimplemented step by design, so it is
-    # gated rather than silently passed with `|| true`.
-    if: false
     steps:
       - uses: actions/checkout@v4
 
@@ -71,7 +67,7 @@ jobs:
         run: uv run pytest -q
 
       - name: PII scan
-        run: uv run sbfp-platform-scan-pii || uv run python -m sbfp_platform.privacy.pii_scanner
+        run: uv run sbfp-platform-scan-pii
 
       - name: Upload sample artifacts
         uses: actions/upload-artifact@v4
@@ -81,3 +77,12 @@ jobs:
             outputs/exports
             outputs/reports
           if-no-files-found: ignore
+
+  container:
+    name: Container build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build dashboard image
+        run: docker build --tag sbfp-platform:ci .

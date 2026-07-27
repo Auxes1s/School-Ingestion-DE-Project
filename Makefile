@@ -1,7 +1,7 @@
 PROFILE ?= demo
 SEED    ?= 2026
 
-.PHONY: install doctor generate ingest dqa silver linkage gold score export pipeline test lint fmt dashboard dagster clean
+.PHONY: install doctor generate ingest dqa silver linkage gold score export pipeline test lint fmt scan dashboard dagster docker clean
 
 install:
 	uv sync --extra dev
@@ -46,11 +46,18 @@ fmt:
 	uv run ruff format .
 	uv run ruff check --fix .
 
+scan:
+	uv run sbfp-platform-scan-pii
+
 dashboard:
 	uv run streamlit run dashboards/streamlit_app.py
 
 dagster:
 	uv run dagster dev -m orchestration.dagster_project.definitions
+
+docker:
+	docker compose run --rm pipeline
+	docker compose up dashboard
 
 clean:
 	rm -rf data/synthetic_raw data/ground_truth data/lakehouse outputs/exports outputs/reports dbt/target

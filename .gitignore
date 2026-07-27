@@ -32,3 +32,6 @@ orchestration/dagster_project/.dagster_home/
 tmp_dagster_home_*/
 
 .env
+
+# Local conversation exports used to resume agent sessions; may contain account data.
+20*-users*.txt

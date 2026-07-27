@@ -1,108 +1,130 @@
 # School Feeding Data Platform
 
-A privacy-safe, public-sector data engineering platform for school feeding monitoring
-and evaluation. It simulates messy school submissions and transforms them into trusted
-data products through a local lakehouse, orchestrated ingestion, data quality checks,
-probabilistic record linkage, tested transformations, and dashboard-ready marts.
+A privacy-safe public-sector data platform that turns messy synthetic school
+submissions into measured, analysis-ready outputs. It combines Python ingestion and
+validation, dbt/DuckDB transformations, real Splink entity resolution, Dagster assets,
+and a Streamlit data-quality command center.
 
-**All data is synthetic.** No real learner records are present anywhere in this
-repository. See `docs/privacy_and_synthetic_data.md`.
+**All data is generated on demand. No real learner or school records are included.**
 
----
+## The headline: quality you can measure
 
-## What makes this different
+Most portfolio pipelines assert that their checks work. This one generates a hidden
+answer key—every injected defect and every true baseline/endline pair—then evaluates the
+finished pipeline without exposing that key to it.
 
-Most data quality projects assert that their validation works. This one **measures it**.
+Tiny fixed-seed demo results:
 
-Because the data is synthetic, the generator knows the right answer. It writes a hidden
-ground-truth answer key alongside the messy source files — every injected defect, and
-every baseline↔endline pair that genuinely exists. The pipeline never sees it. Only the
-evaluation layer does, and a test enforces that separation.
+| Result | Value |
+|---|---:|
+| Schools / source files | 5 / 13 |
+| Baseline + endline records | 1,918 |
+| DQA rules executed | 21 / 21 |
+| Combined accepted links | 827 |
+| Linkage precision @ 0.75 | **100.0%** |
+| Linkage recall @ 0.75 | **94.0%** |
+| Linkage F1 @ 0.75 | **96.9%** |
+| Transfer recall | **88.5%** |
 
-That buys two scorecards that a real pipeline structurally cannot produce:
+The dashboard leads with the **DQA scorecard**: injected, detected, missed, and false
+positive counts per rule. The linkage page separates match rate from known-truth recall
+and sweeps thresholds so precision, recall, F1, and review workload are visible rather
+than implied.
 
-- **DQA scorecard** — for every validation rule: how many defects were injected, how
-  many were caught, how many false positives were raised. Detection rate and precision
-  per rule.
-- **Linkage scorecard** — true precision, recall, and F1 for deterministic vs.
-  probabilistic matching, swept across thresholds. Real linkage pipelines can only ever
-  report *match rate*, because nobody knows the true answer.
+## Run it
 
-The linkage scorecard also reports the **transfer recall ceiling**: the generator injects
-pupils who move schools between waves, and per-school blocking cannot find them by
-construction. That limitation is published rather than hidden.
-
----
-
-## Status
-
-Under active construction. Build slices, in order:
-
-| # | Slice | Status |
-|---|---|---|
-| 1 | Skeleton, frozen config + schema contracts, CLI, CI | ✅ |
-| 2 | Synthetic generator + ground truth | ⬜ |
-| 3 | Bronze ingestion, manifest, schema drift log | ⬜ |
-| 4 | DQA engine + DQA scorecard | ⬜ |
-| 5 | dbt silver + gold marts | ⬜ |
-| 6 | Record linkage + linkage scorecard | ⬜ |
-| 7 | Dagster orchestration | ⬜ |
-| 8 | Streamlit command center | ⬜ |
-| 9 | Documentation and polish | ⬜ |
-
----
-
-## Quickstart
+Requirements: Python 3.11–3.12 and [uv](https://docs.astral.sh/uv/).
 
 ```bash
 uv sync --extra dev
-make doctor                 # verify config contracts and dependencies
-make pipeline PROFILE=demo  # generate → ingest → silver → dqa → linkage → gold → score
-make dashboard              # Streamlit command center
+make doctor PROFILE=tiny
+make pipeline PROFILE=tiny   # generate → bronze → silver → DQA/linkage → gold → score
+make dashboard               # http://localhost:8501
 ```
 
-### Scale profiles
+The default `demo` profile has 40 schools and 12,000 children. The fixed-seed `tiny`
+profile (5 schools, 1,000 children) is the CI smoke test; `large` is an opt-in 150-school,
+50,000-child scale run. Generated source data, answer keys, lakehouse files, and exports
+are Git-ignored and reproducible.
 
-| Profile | Schools | Children | Runtime |
-|---|---:|---:|---|
-| `tiny` | 5 | 1,000 | < 30s (CI) |
-| `demo` | 40 | 12,000 | 2–4 min (default) |
-| `large` | 150 | 50,000 | opt-in |
+Useful commands:
 
-One seed drives all randomness: the same seed and profile reproduce byte-identical
-source files. No generated data is committed — `make generate` reproduces it.
+```bash
+make generate PROFILE=tiny   # messy CSV/XLSX + answer key
+make ingest PROFILE=tiny     # idempotent hash-based bronze ingestion
+make silver PROFILE=tiny     # dbt silver models and tests
+make dqa PROFILE=tiny        # 21 config-backed quality rules
+make linkage PROFILE=tiny    # deterministic passes + per-school Splink
+make gold PROFILE=tiny       # privacy-safe marts
+make score PROFILE=tiny      # measured DQA and linkage scorecards
+make export PROFILE=tiny     # CSV + Parquet public products
+make dagster                 # observable eight-asset graph
+make test && make lint
+```
 
----
+Docker users can run `docker compose run --rm pipeline`, followed by
+`docker compose up dashboard`.
 
 ## Architecture
 
+```text
+Python generator   → synthetic_raw/ + answer key (outside the lakehouse)
+Python ingestion   → bronze/        manifests, hashes, drift, date provenance
+dbt + DuckDB       → silver_*       standardized entities and measurements
+                     ├─ Python DQA  → silver_dqa_issues
+                     └─ Splink      → candidates, one-to-one results, review queue
+dbt + DuckDB       → gold_*         panel, monitoring, exposure, quality marts
+Python evaluation  → scorecards     pipeline outputs joined to answer key
+Dagster            → 8 assets       the complete cross-framework dependency graph
+Streamlit          → 6 pages        privacy-safe command center
 ```
-Python generator   →  synthetic_raw/  +  ground_truth/   (answer key, pipeline never reads)
-Python ingestion   →  bronze/         hash, manifest, schema drift, date parsing
-dbt (DuckDB)       →  silver_*        standardize, normalize
-Python linkage     →  linkage/        deterministic → Splink → review queue
-dbt (DuckDB)       →  gold_*          evaluation panel, monitoring marts
-Python evaluation  →  scorecards      gold ⨝ ground truth
-Dagster            →  asset graph across all of the above
-Streamlit          →  DQA command center
+
+The answer key is structurally isolated: only `sbfp_platform.evaluation` may read it.
+AST tests prevent pipeline imports or path literals, dbt models are scanned, and runtime
+tests reject learner names, LRNs, or raw payloads in gold and exports.
+
+The generator and ingester independently derive the same source identity:
+`record_id = SHA256(source_file_id|source_row_number)[:16]`. This makes every quality
+finding traceable to a source row and every detection score reproducible without leaking
+labels into validation.
+
+## What is demonstrated
+
+| Data-engineering area | Implementation |
+|---|---|
+| Generation | Deterministic synthetic world, messy schema/date variants, controlled defects |
+| Ingestion | CSV/XLSX discovery, idempotency, version history, drift and error logs |
+| Storage/modeling | Parquet lakehouse, DuckDB, two-stage dbt graph, 27 dbt tests |
+| Data quality | 21 severity/scope-aware rules and measured detection scorecard |
+| Entity resolution | Three deterministic passes, Splink 4 EM, global one-to-one resolver |
+| Orchestration | Dagster assets branching after silver and rejoining before gold |
+| Serving | Six-page Streamlit command center and dual CSV/Parquet exports |
+| DataOps | pytest regression floors, Ruff, GitHub Actions, Docker, privacy scan |
+
+## Repository map
+
+```text
+configs/                    frozen scale, schema, DQA, and linkage policy
+src/sbfp_platform/          generator, ingestion, validation, linkage, evaluation
+dbt/                        staging, silver, gold models and tests
+orchestration/              Dagster definitions, jobs, schedule
+dashboards/                 Streamlit command center
+tests/                      unit, integration, privacy, and score regression tests
+docs/                       architecture, contracts, lineage, DQA, privacy, ADRs
 ```
 
-Linkage sits deliberately between the two dbt stages: it cannot be expressed in SQL, and
-gold depends on it.
+Start with [architecture](docs/architecture.md), [data contracts](docs/data_contracts.md),
+[lineage](docs/data_lineage.md), [DQA rules](docs/dqa_rules.md), and the
+[five-minute walkthrough](docs/portfolio_walkthrough.md). The executable schemas in
+`src/sbfp_platform/contracts.py` remain authoritative.
 
----
+## Honest limitations
 
-## Domain grounding
+- Splink runs per school, matching the reference workflow; transfers are only recovered
+  by the explicit cross-school deterministic pass, so transfer recall is reported.
+- This is a local public demo, not a managed multi-user warehouse. A real deployment
+  still needs encrypted storage, access control, retention policy, and small-cell
+  suppression.
+- Synthetic scorecards measure engineering behavior, not official program impact.
 
-The synthetic data models the real engineering problem of a school-based feeding program
-impact evaluation in BARMM, Philippines. Canonical field names (`lrn_clean`,
-`student_name_clean`, `first_letter_name`, `birthday_str`), the per-school Splink loop,
-and the 0.75 accept / 0.65 review thresholds mirror that real pipeline so the synthetic
-problem is recognizably the real one. No data, records, or confidential material from
-that work appear here.
-
----
-
-## License
-
-MIT
+Licensed under the [MIT License](LICENSE).
