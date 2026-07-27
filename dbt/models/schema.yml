@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: silver_schools
+    columns:
+      - name: school_id
+        data_tests: [not_null, unique]
+      - name: treatment_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: {values: [0, 1]}
+  - name: silver_child_records
+    columns:
+      - name: child_record_id
+        data_tests: [not_null, unique]
+      - name: school_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: "ref('silver_schools')", field: school_id}
+      - name: period
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: {values: [baseline, endline]}
+  - name: silver_measurements
+    columns:
+      - name: measurement_id
+        data_tests: [not_null, unique]
+      - name: child_record_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: "ref('silver_child_records')", field: child_record_id}
+  - name: silver_allocations
+    data_tests:
+      - unique:
+          arguments: {column_name: "school_id || ':' || school_year"}
+    columns:
+      - name: school_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: "ref('silver_schools')", field: school_id}
+  - name: gold_evaluation_child_panel
+    columns:
+      - name: panel_child_id
+        data_tests: [not_null, unique]
+      - name: school_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: "ref('silver_schools')", field: school_id}
+      - name: treatment_status
+        data_tests: [not_null]
+  - name: gold_school_monitoring_mart
+    columns:
+      - name: school_id
+        data_tests: [not_null, unique]
+  - name: gold_linkage_review_mart
+    columns:
+      - name: link_id
+        data_tests: [not_null, unique]

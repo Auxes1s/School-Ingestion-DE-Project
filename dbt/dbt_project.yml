@@ -1,0 +1,19 @@
+name: sbfp_platform
+version: 1.0.0
+config-version: 2
+
+profile: sbfp_platform
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  sbfp_platform:
+    +materialized: table
+    staging:
+      +materialized: ephemeral
+    silver:
+      +tags: ["silver"]
+    gold:
+      +tags: ["gold"]
