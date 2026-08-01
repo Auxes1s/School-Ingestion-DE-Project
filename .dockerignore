@@ -1,0 +1,16 @@
+.git
+.github
+.venv
+.uv_cache
+.pytest_cache
+.ruff_cache
+__pycache__
+*.pyc
+.DS_Store
+data/synthetic_raw
+data/ground_truth
+data/lakehouse
+outputs
+dbt/target
+dbt/logs
+2026-*.txt

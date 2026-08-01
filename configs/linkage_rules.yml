@@ -1,0 +1,64 @@
+# Link the first and last records.
+#
+# Exact rules remain as a transparent benchmark. The production resolver is one
+# globally trained Splink model containing both exact and fuzzy evidence.
+
+deterministic:
+  passes:
+    - pass_id: DET_EXACT_LRN
+      description: Exact match on cleaned LRN within school.
+      keys: [school_id, lrn_clean]
+      require_non_null: [lrn_clean]
+    - pass_id: DET_NAME_DOB_SEX
+      description: Exact match on standardized name, birth date, and sex within school.
+      keys: [school_id, student_name_clean, birthday_str, sex]
+      require_non_null: [student_name_clean, birthday_str, sex]
+    - pass_id: DET_NAME_DOB_SEX_CROSS_SCHOOL
+      description: Same as above but ignoring school, to catch transfers.
+      keys: [student_name_clean, birthday_str, sex]
+      require_non_null: [student_name_clean, birthday_str, sex]
+
+probabilistic:
+  backend: duckdb
+  scope: global
+  model_uid: measured_trust_splink_v1
+  random_seed: 42
+  u_max_pairs: 200000
+
+  prediction_blocking_rules:
+    - "l.lrn_clean = r.lrn_clean"
+    - "l.student_name_clean = r.student_name_clean"
+    - "l.birthday_str = r.birthday_str"
+    - "l.school_id = r.school_id AND l.first_letter_name = r.first_letter_name"
+    - "l.school_id = r.school_id AND substr(l.birthday_str, 1, 4) = substr(r.birthday_str, 1, 4) AND l.sex = r.sex"
+
+  em_training_rules:
+    - "l.lrn_clean = r.lrn_clean"
+    - "l.birthday_str = r.birthday_str AND l.sex = r.sex"
+    - "l.student_name_clean = r.student_name_clean AND l.sex = r.sex"
+
+  comparisons:
+    - column: lrn_clean
+      method: exact
+    - column: student_name_clean
+      method: jaro_winkler
+      thresholds: [0.95, 0.90, 0.82, 0.70]
+    - column: birthday_str
+      method: date_of_birth
+      thresholds: [1, 1]
+      metrics: [month, year]
+    - column: sex
+      method: exact
+    - column: school_id
+      method: exact
+
+  accept_threshold: 0.10
+  review_floor: 0.10
+  ambiguity_margin_weight: 1.0
+  sweep: [0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.90]
+
+review_queue:
+  send_to_review_when:
+    - score_between_review_floor_and_accept
+    - ambiguous_candidate_margin
+    - school_transfer_detected

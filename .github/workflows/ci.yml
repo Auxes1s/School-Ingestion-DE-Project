@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "feat/**"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  UV_CACHE_DIR: /tmp/.uv-cache
+
+jobs:
+  quality:
+    name: Lint, contracts, and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Format check
+        run: uv run ruff format --check .
+
+      - name: Config contracts
+        run: uv run sbfp-platform doctor --profile tiny
+
+      - name: Unit tests
+        run: uv run pytest -q -m "not integration"
+
+  pipeline:
+    name: Tiny-profile pipeline smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Full pipeline on the tiny profile
+        run: uv run sbfp-platform full-refresh --profile tiny
+
+      - name: Integration and invariant tests
+        run: uv run pytest -q
+
+      - name: PII scan
+        run: uv run sbfp-platform-scan-pii
+
+      - name: Upload sample artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiny-profile-outputs
+          path: |
+            outputs/exports
+            outputs/reports
+          if-no-files-found: ignore
+
+  container:
+    name: Container build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build dashboard image
+        run: docker build --tag sbfp-platform:ci .

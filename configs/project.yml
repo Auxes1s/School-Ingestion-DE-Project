@@ -1,0 +1,19 @@
+# Shared project rules. Other steps may read them but must not edit them.
+project_name: school-feeding-data-platform
+environment: local
+default_seed: 2026
+default_profile: demo
+max_workers: 4
+
+# School year for the test data.
+school_year: "2024-2025"
+baseline_window:
+  start: "2024-08-01"
+  end: "2024-09-30"
+endline_window:
+  start: "2025-03-01"
+  end: "2025-04-30"
+
+# Plausible birth-year guard for the date parser (see spec §6).
+birth_year_min: 2010
+birth_year_max: 2021

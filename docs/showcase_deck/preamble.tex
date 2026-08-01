@@ -1,0 +1,91 @@
+% Original "Evidence Ledger" theme for Measured Trust.
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{ragged2e}
+
+\definecolor{SignalTeal}{HTML}{0F766E}
+\definecolor{EvidenceAmber}{HTML}{D97706}
+\definecolor{ResolverViolet}{HTML}{6D28D9}
+\definecolor{MidnightInk}{HTML}{0F172A}
+\definecolor{Slate}{HTML}{475569}
+\definecolor{WarmPaper}{HTML}{FCFAF5}
+\definecolor{Mist}{HTML}{E7EEF0}
+\definecolor{AuditRed}{HTML}{B42318}
+\definecolor{VerifiedGreen}{HTML}{15803D}
+\definecolor{CivicBlue}{HTML}{1D4ED8}
+
+\setbeamercolor{background canvas}{bg=WarmPaper}
+\setbeamercolor{normal text}{fg=MidnightInk,bg=WarmPaper}
+\setbeamercolor{frametitle}{fg=MidnightInk,bg=WarmPaper}
+\setbeamercolor{footline}{fg=Slate,bg=WarmPaper}
+\setbeamercolor{structure}{fg=SignalTeal}
+\setbeamerfont{normal text}{size=\fontsize{17}{21}}
+\setbeamerfont{frametitle}{size=\fontsize{22}{25},series=\bfseries}
+\setbeamerfont{footline}{size=\fontsize{8.5}{10}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=0.72cm,text margin right=0.72cm}
+\setlength{\parskip}{0.45em}
+\raggedright
+
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \vspace{0.50cm}%
+  \hbox{%
+    \color{SignalTeal}\rule[-0.08cm]{0.10cm}{0.88cm}%
+    \hspace{0.23cm}%
+    \begin{minipage}[b]{0.90\paperwidth}%
+      \raggedright\usebeamerfont{frametitle}\insertframetitle
+    \end{minipage}%
+  }%
+  \vspace{0.12cm}%
+}
+
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox{%
+    \begin{beamercolorbox}[wd=0.82\paperwidth,ht=0.38cm,dp=0.16cm,leftskip=0.72cm]{footline}%
+      MEASURED TRUST \hspace{0.18cm}\textcolor{Mist}{|}\hspace{0.18cm} synthetic proof case
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=0.18\paperwidth,ht=0.38cm,dp=0.16cm,rightskip=0.72cm plus1fil]{footline}%
+      \hfill\insertframenumber/\inserttotalframenumber
+    \end{beamercolorbox}%
+  }%
+}
+
+\newcommand{\source}[1]{\vfill{\fontsize{8.5}{10}\selectfont\color{Slate}#1}}
+\newcommand{\eyebrow}[1]{{\fontsize{10}{12}\selectfont\bfseries\color{SignalTeal}\MakeUppercase{#1}}}
+\newcommand{\bigmetric}[2]{%
+  {\fontsize{35}{37}\selectfont\bfseries\color{#1}#2}%
+}
+\newcommand{\ledgerbox}[3]{%
+  \colorbox{#1!8}{%
+    \begin{minipage}[t][2.35cm][c]{\dimexpr\linewidth-2\fboxsep\relax}
+      \centering
+      {\fontsize{12}{14}\selectfont\bfseries\color{#1}\MakeUppercase{#2}}\par
+      \vspace{0.12cm}
+      {\fontsize{15}{18}\selectfont\bfseries\color{MidnightInk}#3}
+    \end{minipage}%
+  }%
+}
+
+\lstdefinestyle{ledgercode}{
+  basicstyle=\ttfamily\fontsize{11}{13}\selectfont,
+  keywordstyle=\color{ResolverViolet}\bfseries,
+  stringstyle=\color{SignalTeal},
+  commentstyle=\color{Slate},
+  backgroundcolor=\color{Mist!55},
+  frame=single,
+  rulecolor=\color{Mist},
+  framesep=7pt,
+  xleftmargin=2pt,
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+}

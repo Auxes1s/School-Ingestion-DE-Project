@@ -1,0 +1,18 @@
+services:
+  pipeline:
+    build: .
+    command: uv run sbfp-platform full-refresh --profile ${SBFP_PROFILE:-tiny}
+    environment:
+      SBFP_PROFILE: ${SBFP_PROFILE:-tiny}
+    volumes:
+      - ./data:/app/data
+      - ./outputs:/app/outputs
+
+  dashboard:
+    build: .
+    command: uv run streamlit run dashboards/streamlit_app.py --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data:ro
+      - ./outputs:/app/outputs:ro

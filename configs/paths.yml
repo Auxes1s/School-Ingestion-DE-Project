@@ -1,0 +1,27 @@
+# Main paths from the repo root. Do not edit.
+#
+# The known truth sits outside the data lake.
+# Only the test score code may read it.
+# A test guards this rule. See spec §2.2.
+
+raw_data_dir: data/synthetic_raw
+ground_truth_dir: data/ground_truth
+
+lakehouse_dir: data/lakehouse
+bronze_dir: data/lakehouse/bronze
+silver_dir: data/lakehouse/silver
+gold_dir: data/lakehouse/gold
+linkage_dir: data/lakehouse/linkage
+
+duckdb_path: data/lakehouse/platform.duckdb
+
+outputs_dir: outputs
+exports_dir: outputs/exports
+reports_dir: outputs/reports
+
+raw_subdirs:
+  baseline: data/synthetic_raw/baseline
+  endline: data/synthetic_raw/endline
+  enrollment: data/synthetic_raw/enrollment
+  allocation: data/synthetic_raw/allocation
+  reference: data/synthetic_raw/reference

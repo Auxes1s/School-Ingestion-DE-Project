@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">Verified tiny-profile quality and linkage results</title>
+  <desc id="desc">Horizontal bars show 90.75 percent DQA detection, 100 percent trained Splink precision, 92.27 percent trained Splink recall, 95.98 percent F1, and 73.08 percent transfer recall.</desc>
+  <rect width="1200" height="420" rx="24" fill="#0f172a"/>
+  <text x="44" y="53" fill="#f8fafc" font-family="Inter,Segoe UI,sans-serif" font-size="27" font-weight="600">Measured, not asserted</text>
+  <text x="44" y="82" fill="#94a3b8" font-family="Inter,Segoe UI,sans-serif" font-size="15">Fixed seed 2026 • tiny profile • 1,918 records • 812 accepted links</text>
+
+  <g font-family="Inter,Segoe UI,sans-serif">
+    <g transform="translate(44 116)">
+      <text x="0" y="23" fill="#cbd5e1" font-size="15">DQA detection</text>
+      <rect x="210" y="5" width="860" height="22" rx="11" fill="#1e293b"/>
+      <rect x="210" y="5" width="780" height="22" rx="11" fill="#2dd4bf"/>
+      <text x="1112" y="23" text-anchor="end" fill="#f8fafc" font-size="16" font-weight="600">90.75%</text>
+    </g>
+    <g transform="translate(44 172)">
+      <text x="0" y="23" fill="#cbd5e1" font-size="15">Linkage precision</text>
+      <rect x="210" y="5" width="860" height="22" rx="11" fill="#1e293b"/>
+      <rect x="210" y="5" width="860" height="22" rx="11" fill="#38bdf8"/>
+      <text x="1112" y="23" text-anchor="end" fill="#f8fafc" font-size="16" font-weight="600">100.00%</text>
+    </g>
+    <g transform="translate(44 228)">
+      <text x="0" y="23" fill="#cbd5e1" font-size="15">Linkage recall</text>
+      <rect x="210" y="5" width="860" height="22" rx="11" fill="#1e293b"/>
+      <rect x="210" y="5" width="794" height="22" rx="11" fill="#818cf8"/>
+      <text x="1112" y="23" text-anchor="end" fill="#f8fafc" font-size="16" font-weight="600">92.27%</text>
+    </g>
+    <g transform="translate(44 284)">
+      <text x="0" y="23" fill="#cbd5e1" font-size="15">Linkage F1</text>
+      <rect x="210" y="5" width="860" height="22" rx="11" fill="#1e293b"/>
+      <rect x="210" y="5" width="825" height="22" rx="11" fill="#a78bfa"/>
+      <text x="1112" y="23" text-anchor="end" fill="#f8fafc" font-size="16" font-weight="600">95.98%</text>
+    </g>
+    <g transform="translate(44 340)">
+      <text x="0" y="23" fill="#cbd5e1" font-size="15">Transfer recall</text>
+      <rect x="210" y="5" width="860" height="22" rx="11" fill="#1e293b"/>
+      <rect x="210" y="5" width="628" height="22" rx="11" fill="#fbbf24"/>
+      <text x="1112" y="23" text-anchor="end" fill="#f8fafc" font-size="16" font-weight="600">73.08%</text>
+    </g>
+  </g>
+
+  <text x="1156" y="399" text-anchor="end" fill="#94a3b8" font-family="Inter,Segoe UI,sans-serif" font-size="12">Trained Splink at threshold 0.10</text>
+</svg>

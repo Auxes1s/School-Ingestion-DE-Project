@@ -1,0 +1,45 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+.uv_cache/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Make this data with `make generate` and the set seed.
+# Keep only test data and README files in Git.
+data/synthetic_raw/
+data/ground_truth/
+data/lakehouse/
+*.duckdb
+*.duckdb.wal
+
+# Generated outputs
+outputs/exports/
+outputs/reports/
+outputs/lineage/
+
+# TeX build intermediates; keep source, figures, and final PDFs.
+docs/showcase_deck/**/*.aux
+docs/showcase_deck/**/*.log
+docs/showcase_deck/**/*.nav
+docs/showcase_deck/**/*.out
+docs/showcase_deck/**/*.snm
+docs/showcase_deck/**/*.toc
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
+# Dagster
+orchestration/dagster_project/.dagster_home/
+tmp_dagster_home_*/
+
+.env
+
+# Local chat logs may hold private facts.
+20*-users*.txt

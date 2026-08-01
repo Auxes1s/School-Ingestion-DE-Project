@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage[paperwidth=8in,paperheight=8in,margin=0in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\pagestyle{empty}
+
+\definecolor{SignalTeal}{HTML}{0F766E}
+\definecolor{ResolverViolet}{HTML}{6D28D9}
+\definecolor{MidnightInk}{HTML}{0F172A}
+\definecolor{Slate}{HTML}{475569}
+\definecolor{WarmPaper}{HTML}{FCFAF5}
+\definecolor{Mist}{HTML}{E7EEF0}
+\pagecolor{WarmPaper}
+\color{MidnightInk}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+\begin{tikzpicture}[remember picture,overlay]
+  % Coordinate map: title block top-left; learning callout upper-middle;
+  % linkage chart center; metric ledger bottom; proof-case note at foot.
+  \fill[SignalTeal] (0.42in,-0.44in) rectangle (0.50in,-1.46in);
+  \node[anchor=north west,text width=7.0in] at (0.72in,-0.45in) {%
+    {\fontsize{10}{12}\selectfont\bfseries\color{SignalTeal}PROJECT SHOWCASE \enspace / \enspace DATA ENGINEERING}\par
+    \vspace{0.11in}
+    {\fontsize{34}{37}\selectfont\bfseries MEASURED TRUST}\par
+    \vspace{0.06in}
+    {\fontsize{18}{22}\selectfont\color{Slate}Connecting records that were never designed to connect.}%
+  };
+
+  \node[anchor=north west,fill=Mist!62,inner sep=0.17in,text width=6.60in] at (0.70in,-1.72in) {%
+    {\fontsize{9}{11}\selectfont\bfseries\color{ResolverViolet}LEARNED ALONG THE WAY}\par
+    \vspace{0.04in}
+    {\fontsize{15}{18}\selectfont\bfseries Trained probabilistic entity resolution with Splink}\par
+    {\fontsize{12}{15}\selectfont\color{Slate}one global model, persisted and loaded for inference.}%
+  };
+
+  \node[anchor=north west] at (0.58in,-3.00in) {\includegraphics[width=6.90in]{linkage_lift_publication.pdf}};
+
+  \node[anchor=south west] at (0.62in,-5.76in) {%
+    {\fontsize{10}{12}\selectfont\bfseries\color{SignalTeal}FIXED SYNTHETIC BENCHMARK}%
+  };
+  \draw[Mist,line width=1pt] (0.55in,-5.83in) -- (7.45in,-5.83in);
+  \node[anchor=north west,text width=2.0in] at (0.62in,-6.08in) {%
+    {\fontsize{26}{29}\selectfont\bfseries\color{SignalTeal}92.3\%}\par
+    {\fontsize{10}{12}\selectfont\bfseries SPLINK RECALL}%
+  };
+  \node[anchor=north west,text width=2.0in] at (2.95in,-6.08in) {%
+    {\fontsize{26}{29}\selectfont\bfseries\color{ResolverViolet}100\%}\par
+    {\fontsize{10}{12}\selectfont\bfseries PRECISION}%
+  };
+  \node[anchor=north west,text width=2.0in] at (5.25in,-6.08in) {%
+    {\fontsize{26}{29}\selectfont\bfseries\color{MidnightInk}+256}\par
+    {\fontsize{10}{12}\selectfont\bfseries MORE TRUE LINKS OVERALL}%
+  };
+
+  \node[anchor=south west,text width=7.0in] at (0.60in,-7.68in) {%
+    {\fontsize{9}{11}\selectfont\color{Slate}Fixed synthetic benchmark \enspace\textbullet\enspace quality assurance + entity resolution \enspace\textbullet\enspace reusable across disconnected databases}%
+  };
+\end{tikzpicture}
+\null
+\end{document}

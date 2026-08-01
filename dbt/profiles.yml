@@ -1,0 +1,8 @@
+sbfp_platform:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('SBFP_DUCKDB_PATH') }}"
+      schema: main
+      threads: 4

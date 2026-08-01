@@ -1,0 +1,125 @@
+# Column name map. Do not edit.
+# This map lets two steps run at once.
+# The data maker picks names from `aliases`.
+# The load step maps them back to set names.
+# Neither step needs the other step's output.
+#
+# The same lists serve both steps.
+# The data maker uses them to make varied headers.
+# The load step cleans them and maps them to set names.
+# Case and marks may vary on purpose.
+# One clean header must not map to two set names.
+# A test guards this rule.
+#
+# Keep fields that have no map.
+# Put them in raw_payload_json and log them in bronze_schema_drift_log.
+# See spec §4 and TDS §14.3.
+
+version: 1
+
+datasets:
+
+  school_submission:
+    required: [school_name, student_name, birth_date, sex]
+    # A row needs these fields before we can load it.
+    minimum_viable: [school_name, student_name]
+    columns:
+      school_name:
+        canonical: school_name
+        aliases: ["School", "SCHOOL NAME", "Name of School", "school_name", "SchoolName", "Paaralan"]
+      school_id:
+        canonical: school_id
+        aliases: ["School ID", "SCHOOL_ID", "school id", "Sch ID", "School Code"]
+      lrn:
+        canonical: lrn_clean
+        aliases: ["LRN", "Learner Reference Number", "learner_ref_no", "LRN No.", "lrn"]
+      student_name:
+        canonical: student_name_clean
+        aliases: ["Name", "NAME OF LEARNER", "Learner Name", "Student Name", "Pangalan", "name_of_pupil"]
+      birth_date:
+        canonical: birthday_str
+        aliases: ["Date of Birth", "BIRTH_DATE", "DOB", "Birthdate", "Birth Date", "Kaarawan", "date_of_birth"]
+      sex:
+        canonical: sex
+        aliases: ["Sex", "SEX", "Gender", "M/F", "kasarian"]
+      grade:
+        canonical: grade
+        aliases: ["Grade", "GRADE LEVEL", "Grade Level", "Yr Level", "grade_level"]
+      height_cm:
+        canonical: height_cm
+        aliases: ["Height", "Height (cm)", "HEIGHT_CM", "Ht", "height_cm", "Taas"]
+      weight_kg:
+        canonical: weight_kg
+        aliases: ["Weight", "Weight (kg)", "WEIGHT_KG", "Wt", "weight_kg", "Timbang"]
+      measurement_date:
+        canonical: measurement_date
+        aliases: ["Date Measured", "MEASUREMENT_DATE", "Date of Weighing", "Weighing Date", "date_measured"]
+
+  enrollment_snapshot:
+    required: [school_name, school_year, current_enrollment]
+    minimum_viable: [school_name]
+    columns:
+      school_name:
+        canonical: school_name
+        aliases: ["School", "SCHOOL NAME", "Name of School"]
+      school_year:
+        canonical: school_year
+        aliases: ["SY", "School Year", "SCHOOL_YEAR"]
+      current_enrollment:
+        canonical: current_enrollment
+        aliases: ["Enrollment", "Total Enrolment", "Current Enrollment", "ENROLLMENT", "No. of Learners"]
+
+  program_allocation:
+    required: [school_name, school_year, allocated_children]
+    minimum_viable: [school_name]
+    columns:
+      school_name:
+        canonical: school_name
+        aliases: ["School", "SCHOOL NAME", "Name of School"]
+      school_year:
+        canonical: school_year
+        aliases: ["SY", "School Year", "SCHOOL_YEAR"]
+      allocated_children:
+        canonical: allocated_children
+        aliases: ["Allocation", "Allocated Beneficiaries", "No. of Beneficiaries", "ALLOCATED"]
+      delivery_tranche_count:
+        canonical: delivery_tranche_count
+        aliases: ["Tranches", "No. of Tranches", "Deliveries"]
+
+  school_masterlist:
+    required: [school_id, school_name, division, municipality, treatment_status]
+    minimum_viable: [school_id, school_name]
+    columns:
+      school_id:
+        canonical: school_id
+        aliases: ["School ID", "SCHOOL_ID", "School Code"]
+      school_name:
+        canonical: school_name
+        aliases: ["School", "SCHOOL NAME", "Name of School"]
+      division:
+        canonical: division
+        aliases: ["Division", "DIVISION", "Schools Division"]
+      municipality:
+        canonical: municipality
+        aliases: ["Municipality", "MUNICIPALITY", "City/Municipality"]
+      barangay:
+        canonical: barangay
+        aliases: ["Barangay", "BARANGAY", "Brgy"]
+      urban_rural:
+        canonical: urban_rural
+        aliases: ["Urban/Rural", "URBAN_RURAL", "Classification"]
+      treatment_status:
+        canonical: treatment_status
+        aliases: ["Treatment", "SBFP", "TREATMENT_STATUS", "Is SBFP"]
+      matched_pair_id:
+        canonical: matched_pair_id
+        aliases: ["Pair", "Matched Pair", "MATCHED_PAIR_ID"]
+
+# Clean these values before the data checks run.
+value_normalization:
+  sex:
+    Male: ["M", "MALE", "Male", "male", "1", "Lalaki", "BOY", "Boy"]
+    Female: ["F", "FEMALE", "Female", "female", "2", "Babae", "GIRL", "Girl"]
+  treatment_status:
+    "1": ["SBFP", "Treatment", "TREATMENT", "Yes", "Y", "1", "TRUE"]
+    "0": ["Control", "CONTROL", "Non-SBFP", "No", "N", "0", "FALSE"]

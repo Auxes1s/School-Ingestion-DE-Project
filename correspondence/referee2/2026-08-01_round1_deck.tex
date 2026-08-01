@@ -1,0 +1,83 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{booktabs}
+\usepackage{xcolor}
+
+\definecolor{Ink}{HTML}{0F172A}
+\definecolor{Teal}{HTML}{0F766E}
+\definecolor{Violet}{HTML}{6D28D9}
+\definecolor{Paper}{HTML}{FCFAF5}
+\definecolor{Slate}{HTML}{475569}
+
+\setbeamercolor{background canvas}{bg=Paper}
+\setbeamercolor{normal text}{fg=Ink,bg=Paper}
+\setbeamercolor{frametitle}{fg=Teal,bg=Paper}
+\setbeamerfont{frametitle}{size=\LARGE,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{\hfill\color{Slate}\insertframenumber/\inserttotalframenumber\hspace{0.5cm}\vspace{0.25cm}}
+\setbeamersize{text margin left=0.8cm,text margin right=0.8cm}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \vfill
+  {\fontsize{34}{39}\selectfont\bfseries\color{Ink}Pre-push QA: Accept}\par
+  \vspace{0.25cm}
+  {\Large\color{Teal}Measured Trust / trained Splink redesign}\par
+  \vfill
+  {\large\color{Slate}Referee 2 code audit · 1 August 2026}
+\end{frame}
+
+\begin{frame}{A clean rebuild passes every executable gate}
+  \centering
+  \begin{tabular}{@{}lr@{}}
+    \toprule
+    \textbf{Gate} & \textbf{Result} \\
+    \midrule
+    Python tests & 407 passed \\
+    dbt tests & 27 passed \\
+    DQA detection & 90.75\% \\
+    Ruff lint + format & PASS \\
+    Privacy scan & PASS \\
+    Deck/card compile warnings & 0 \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{Independent SQL reproduces the linkage scorecard}
+  \centering
+  \begin{tabular}{@{}lrrrr@{}}
+    \toprule
+    & \textbf{True} & \textbf{False} & \textbf{Recall} & \textbf{F1} \\
+    \midrule
+    Exact rules & 556 & 0 & 0.631818 & 0.774373 \\
+    \textcolor{Violet}{\textbf{Trained Splink}} & \textbf{812} & \textbf{0} & \textbf{0.922727} & \textbf{0.959811} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.65cm}
+  {\large Agreement tolerance: $10^{-12}$ across all operating metrics.}
+\end{frame}
+
+\begin{frame}{The production path is trained Splink—not a hybrid shortcut}
+  \vspace{0.35cm}
+  {\Large\bfseries\color{Teal}Train globally $\rightarrow$ persist JSON $\rightarrow$ fresh load $\rightarrow$ infer}\par
+  \vspace{0.65cm}
+  {\large Exact rules are a benchmark only. Accepted production links come from
+  Splink, then pass mutual-best, one-to-one, and ambiguity safeguards.}
+\end{frame}
+
+\begin{frame}{No major concern remains before push}
+  \begin{itemize}
+    \item Clean-room pipeline rebuild completed.
+    \item CI formatting drift and a guaranteed-red prose gate were corrected.
+    \item The DQA regression floor was restored to 90\%.
+    \item Synthetic calibration and seven unresolved transfers remain disclosed.
+  \end{itemize}
+  \vfill
+  {\LARGE\bfseries\color{Teal}Verdict: Accept}
+\end{frame}
+
+\end{document}

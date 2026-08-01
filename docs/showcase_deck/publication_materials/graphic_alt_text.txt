@@ -1,0 +1,1 @@
+Measured Trust project card comparing 63.2% recall for an exact-rule benchmark with 92.3% recall for a globally trained Splink resolver. The fixed synthetic benchmark reports 100% precision, 812 true links, and 256 more true links overall than exact matching. A callout explains that one Splink model is trained, persisted, and loaded for inference.

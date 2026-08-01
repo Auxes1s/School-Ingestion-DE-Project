@@ -1,0 +1,93 @@
+# Rules for test data. The data step reads but does not edit them.
+#
+# One seed drives all draws. The same seed and size yield the same files.
+
+profiles:
+  tiny:
+    divisions: 1
+    municipalities: 2
+    schools: 5
+    children: 1000
+  demo:
+    divisions: 3
+    municipalities: 20
+    schools: 40
+    children: 12000
+  large:
+    divisions: 3
+    municipalities: 20
+    schools: 150
+    children: 50000
+
+# Shape of the panel.
+treatment_share: 0.5
+baseline_retention_rate: 0.88   # Share of children with a true last record.
+transfer_rate: 0.03             # Share of kept children who move to a new school.
+                                # A school-only match will miss them. See spec §3.2.
+
+# Make the aid plan feel real.
+nominal_rice_kg_per_child: 0.09
+allocation_lag_share: 0.35      # Share of schools with an old count for the aid plan.
+
+# Rates for known flaws.
+# Log each flaw in truth_defects.parquet.
+# The `detectable` list says if a rule should find it.
+issue_rates:
+  # Identity fields are deliberately unreliable across forms. In the source SBFP
+  # workflow, many forms lack a usable LRN, names change order or spelling, and
+  # birth dates and sex can disagree. These rates make exact linkage an incomplete
+  # baseline instead of the answer.
+  missing_lrn: 0.30
+  malformed_lrn: 0.05
+  date_format_ambiguity: 0.04
+  excel_serial_date: 0.06
+  timestamp_suffixed_date: 0.03
+  impossible_date: 0.004
+  missing_birth_date: 0.02
+  missing_sex: 0.015
+  duplicate_exact_row: 0.01
+  duplicate_lrn_name_variant: 0.01
+  name_spelling_drift: 0.45      # Endline: typos, dropped tokens, initials, and reordering.
+  implausible_height: 0.005
+  implausible_weight: 0.005
+  height_decrease: 0.004
+  missing_height: 0.03
+  missing_weight: 0.03
+  digit_heaping: 0.08
+  sex_inconsistent_across_waves: 0.08
+  birthdate_inconsistent_across_waves: 0.15
+  school_name_drift: 0.03
+  late_submission: 0.06
+
+# These flaws should be found by a data rule.
+# We still log false items in truth_defects.
+# We leave them out of the hit rate. See spec §2.1.
+detectable:
+  missing_lrn: true
+  malformed_lrn: true
+  date_format_ambiguity: true
+  excel_serial_date: true
+  timestamp_suffixed_date: true
+  impossible_date: true
+  missing_birth_date: true
+  missing_sex: true
+  duplicate_exact_row: true
+  duplicate_lrn_name_variant: true
+  name_spelling_drift: false     # It can look like a new child.
+  implausible_height: true
+  implausible_weight: true
+  height_decrease: true
+  missing_height: true
+  missing_weight: true
+  digit_heaping: true
+  sex_inconsistent_across_waves: true
+  birthdate_inconsistent_across_waves: true
+  school_name_drift: true
+  late_submission: true
+
+# Raw file emission
+file_format_mix:
+  xlsx: 0.75
+  csv: 0.25
+schools_per_file: 1
+sheet_name_variants: ["Sheet1", "DATA", "Masterlist", "SBFP"]

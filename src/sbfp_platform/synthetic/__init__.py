@@ -1,0 +1,1 @@
+"""Make safe test data."""
